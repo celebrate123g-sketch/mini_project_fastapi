@@ -1,28 +1,14 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey
-from sqlalchemy import String
 from datetime import datetime
 
-from db import Base
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship
+)
 
+from app.db import Base
 
-class ChatRequest(Base):
-    __tablename__ = "chat_requests"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-
-    ip_address: Mapped[str] = mapped_column(
-        String,
-        index=True
-    )
-
-    prompt: Mapped[str]
-
-    response: Mapped[str]
-
-    created_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow
-    )
 
 class Chat(Base):
     __tablename__ = "chats"
@@ -37,6 +23,13 @@ class Chat(Base):
         default=datetime.utcnow
     )
 
+    messages = relationship(
+        "Message",
+        back_populates="chat",
+        cascade="all, delete-orphan"
+    )
+
+
 class Message(Base):
     __tablename__ = "messages"
 
@@ -49,8 +42,14 @@ class Message(Base):
     )
 
     role: Mapped[str]
+
     content: Mapped[str]
 
     created_at: Mapped[datetime] = mapped_column(
         default=datetime.utcnow
+    )
+
+    chat = relationship(
+        "Chat",
+        back_populates="messages"
     )

@@ -1,20 +1,20 @@
-from pydantic import BaseModel, Field
 from datetime import datetime
 
+from pydantic import BaseModel, Field
 
-class PromptRequest(BaseModel):
-    prompt: str = Field(
+
+class CreateChatResponse(BaseModel):
+    chat_id: int
+
+
+class SendMessageRequest(BaseModel):
+    content: str = Field(
         min_length=1,
-        max_length=2000
+        max_length=4000
     )
 
 
-class PromptResponse(BaseModel):
-    answer: str
-
-
-class ChatHistory(BaseModel):
-    id: int
-    prompt: str
-    response: str
+class MessageResponse(BaseModel):
+    role: str
+    content: str
     created_at: datetime
